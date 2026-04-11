@@ -487,6 +487,7 @@
         }
     </style>
     <base target="_blank">
+    <base target="_blank">
 </head>
 <body>
     <div class="stars" id="stars"></div>
@@ -1183,22 +1184,33 @@
                 // 生成输出
                 let output = '';
                 let lastOutputFrameNum = null;
+                let globalFrameOffset = 0;  // 全局帧偏移量，跨 frameGroup 累积
 
                 for (const frameGroup of allFrameGroups) {
                     if (lastOutputFrameNum !== null && frameGroup.num !== lastOutputFrameNum) {
                         output += '\n';
                     }
 
-                    for (const option of frameGroup.options) {
-                        for (const frame of option.frames) {
-                            const content = frame.lines.join('\\n');
-                            const selector = parseSelector(selectorParam, frame.num, option.slc);
-                            const rawtext = JSON.stringify({ rawtext: [{ text: content }] }, null, 0);
-                            output += `titleraw ${selector} actionbar ${rawtext}\n`;
+                    // 获取最大动画帧数
+                    const maxAnimFrames = Math.max(...frameGroup.options.map(opt => opt.frames.length), 0);
+
+                    // 按动画帧索引遍历，同一帧索引的不同 slc 共用 frame 编号
+                    for (let frameIdx = 0; frameIdx < maxAnimFrames; frameIdx++) {
+                        const frameNum = globalFrameOffset + frameIdx;  // 帧编号 = 全局偏移 + 当前索引
+
+                        for (const option of frameGroup.options) {
+                            if (frameIdx < option.frames.length) {
+                                const frame = option.frames[frameIdx];
+                                const content = frame.lines.join('\n');
+                                const selector = parseSelector(selectorParam, frameNum, option.slc);
+                                const rawtext = JSON.stringify({ rawtext: [{ text: content }] }, null, 0);
+                                output += `titleraw ${selector} actionbar ${rawtext}\n`;
+                            }
                         }
                     }
 
                     lastOutputFrameNum = frameGroup.num;
+                    globalFrameOffset += maxAnimFrames;  // 更新全局偏移量
                 }
 
                 // 根据当前预览选项生成预览帧
@@ -1347,19 +1359,19 @@
             const watermark = document.createElement('div');
             watermark.textContent = text;
             watermark.style.cssText = `
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.3);
-        pointer-events: none;
-        z-index: 9999;
-        user-select: none;
-    `;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 9999;
+            user-select: none;
+        `;
             document.body.appendChild(watermark);
         }
 
-        addWatermark('StarBloom/SnowballMenuMaker v1.0.1 By NyaCrasin');
+        addWatermark('StarBloom/SnowballMenuMaker v1.0.2 By NyaCrasin');
     </script>
 </body>
 </html>
