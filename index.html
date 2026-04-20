@@ -51,6 +51,20 @@
             margin-bottom: 30px;
         }
 
+        .discuss {
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+
+        .dl_button {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
         .tool-list {
             display: flex;
             flex-direction: column;
@@ -165,14 +179,20 @@
         <div class="tool-list" id="toolList">
             <!-- 工具按钮将在这里动态生成 -->
         </div>
+
+        <div class="dl_button" id="dl">
+
+        </div>
+
+        <div class="discuss"> 加入我们的QQ交流群了解更多:568240555 </div>
     </div>
 
-    <div class="watermark">星绽Minecraft工具箱</div>
+    <div class="watermark">星绽Minecraft工具箱 By NyaCrasin</div>
 
     <script>
         // 工具配置字典
         const tools = {
-            "雪球菜单制作器": "./snowball_menu_maker.html",
+            "雪球菜单制作器": "./snowball_menu_maker.html"
         };
 
         // 创建星空背景
@@ -204,6 +224,13 @@
         // 初始化
         createStars();
         generateToolButtons();
+
+        const list = document.getElementById('dl');
+        const dl_btn = document.createElement('a');
+        dl_btn.href = "./dl_list.html";
+        dl_btn.className = 'dl-btn';
+        dl_btn.textContent = "> 更多实用辅助下载:StarBloom及其附属行为包 <";
+        list.appendChild(dl_btn);
     </script>
 </body>
 </html>
