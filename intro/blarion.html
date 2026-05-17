@@ -1,1 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blarion AntiCheat - Minecraft基岩版行为包反作弊介绍">
+    <meta name="keywords" content="Minecraft,StarBloom,Blarion,AntiCheat,基岩版,行为包">
+    <meta name="author" content="NyaCrasin">
 
+    <meta property="og:title" content="Blarion AntiCheat 介绍">
+    <meta property="og:description" content="StarBloom(星绽) BlarionAntiCheat 反作弊系统介绍">
+    <meta property="og:image" content="./icon.png">
+
+    <title>Blarion AntiCheat 介绍</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #080a14;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 60px;
+            padding-bottom: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 
+                0 0 4px rgba(102, 126, 234, 0.8),
+                0 0 8px rgba(118, 75, 162, 0.6),
+                0 0 16px rgba(102, 126, 234, 0.4),
+                0 0 32px rgba(118, 75, 162, 0.3);
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            color: #ffffff;
+            text-shadow:
+                0 0 3px rgba(102, 126, 234, 0.9),
+                0 0 6px rgba(118, 75, 162, 0.7),
+                0 0 12px rgba(102, 126, 234, 0.5);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: #ffffff;
+            text-shadow:
+                0 0 2px rgba(102, 126, 234, 0.8),
+                0 0 4px rgba(118, 75, 162, 0.6);
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: rgba(13, 22, 66, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .home-btn {
+            color: #aabbff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .home-btn:hover {
+            color: #ffffff;
+            background: rgba(100, 150, 255, 0.15);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #8888aa;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(100, 150, 255, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        .section p {
+            line-height: 1.8;
+            color: #e0e0ff;
+            margin-bottom: 10px;
+        }
+
+        .section .note {
+            color: #ffaa88;
+            font-size: 0.9rem;
+            background: rgba(255, 100, 50, 0.08);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border-left: 3px solid rgba(255, 100, 50, 0.5);
+            margin: 10px 0;
+        }
+
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .check-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(100, 150, 255, 0.12);
+            border-radius: 10px;
+            padding: 14px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .check-card:hover {
+            background: rgba(100, 150, 255, 0.08);
+            border-color: rgba(100, 150, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .check-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ffffff;
+            text-shadow: 0 0 4px rgba(102, 126, 234, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .check-desc {
+            font-size: 0.85rem;
+            color: #a0a0cc;
+            line-height: 1.5;
+        }
+
+        .cmd-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .cmd-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(100, 150, 255, 0.12);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .cmd-name {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            color: #ffffff;
+            text-shadow: 0 0 4px rgba(102, 126, 234, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .cmd-desc {
+            font-size: 0.85rem;
+            color: #a0a0cc;
+            line-height: 1.5;
+        }
+
+        .cmd-params {
+            font-size: 0.8rem;
+            color: #8899cc;
+            margin-top: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .tag-info {
+            background: rgba(100, 255, 150, 0.06);
+            border: 1px solid rgba(100, 255, 150, 0.2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 10px;
+        }
+
+        .tag-info code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #aaffaa;
+            font-family: 'Consolas', monospace;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .watermark {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            border-radius: 4px;
+            font-size: 11px;
+            color: rgba(160, 160, 255, 0.6);
+            pointer-events: none;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+
+        .disabled {
+            opacity: 0.5;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .status-enabled {
+            background: rgba(100, 255, 150, 0.15);
+            color: #88ff88;
+            border: 1px solid rgba(100, 255, 150, 0.3);
+        }
+
+        .status-disabled {
+            background: rgba(255, 100, 100, 0.15);
+            color: #ff8888;
+            border: 1px solid rgba(255, 100, 100, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.2rem; }
+            .check-grid { grid-template-columns: 1fr; }
+            .container { margin-top: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="toolbar">
+        <a href="../index.html" target="_self" class="home-btn">✦返回主页✦</a>
+    </nav>
+
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <h1>✦ Blarion AntiCheat ✦</h1>
+        <div class="subtitle">Minecraft 基岩版行为包反作弊系统</div>
+
+        <div class="section">
+            <h2>关于 Blarion</h2>
+            <p>Blarion AntiCheat 是一个基于 Scythe 反作弊开发的通用 Minecraft 基岩版行为包反作弊，但现已几乎抛弃了 Scythe 的检测代码，由 <strong>NyaCrasin、NexShell、NotWater_135</strong> 共同参与开发。</p>
+            <p>演示视频：<a href="https://www.bilibili.com/video/BV1Pt421j7tQ" style="color:#aabbff;" target="_blank">Bilibili BV1Pt421j7tQ</a></p>
+            <p>外链下载：<a href="https://github.com/StarBloomMinecraft/BlarionAntiCheat/releases" style="color:#aabbff;" target="_blank">Github</a></p>
+        </div>
+
+        <div class="section">
+            <h2>快速开始</h2>
+            <p>1. 导入你下载的反作弊行为包</p>
+            <p>2. 在世界实验玩法中打开<strong>启用测试版 API</strong></p>
+            <p>3. 确保你下载的版本与你的 Minecraft 版本兼容</p>
+            <p>4. 直接开启多人游戏快乐玩耍吧 awa!</p>
+        </div>
+
+        <div class="section">
+            <h2>游戏内命令</h2>
+            <div class="cmd-list">
+                <div class="cmd-item">
+                    <div class="cmd-name">/getinv &lt;玩家&gt;</div>
+                    <div class="cmd-desc">获取指定玩家的背包内容，并在你头顶生成两个箱子用于存放物品。</div>
+                    <div class="cmd-params">⚠ 注意：必须在开阔地带使用，否则可能损坏建筑。</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-name">/forcekick &lt;玩家&gt;</div>
+                    <div class="cmd-desc">强制将玩家从世界中移除（包括所有数据），用于防止 AntiKick 类外挂。</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-name">/scan [玩家]</div>
+                    <div class="cmd-desc">扫描玩家，寻找NBT修改器的痕迹。如果不指定玩家，则扫描所有在线玩家。</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-name">/blac &lt;help|version|credits&gt;</div>
+                    <div class="cmd-desc">Blarion 反作弊主命令。可查看帮助、版本信息或制作人员列表。</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-name">/flag &lt;玩家&gt; &lt;[模块名]&gt; [类型] [调试数据] [是否TP] [是否计VL] [显示类型]</div>
+                    <div class="cmd-desc">这是一个面向开发者的命令，通过外部扩展反作弊程序(如Websocket，MineProxy)手动触发一次作弊标记（需要GameDirector权限）。</div>
+                </div>
+            </div>
+
+            <div class="tag-info">
+                <div> <strong>绕过检查：</strong> </div>
+                <div> 在游戏内使用 <code>/tag 玩家 add bypass_anticheat</code> 可跳过对该玩家的检查；</div>
+                <div> 使用 <code>/tag 玩家 remove bypass_anticheat</code> 可恢复检查。</div>
+                <div> 或者是在config.js内的whitelist列表填上目标玩家的名字 </div>
+        </div>
+
+        <div class="section">
+            <h2>检测模块列表</h2>
+            <div class="check-grid" id="checkGrid">
+                <!-- 由 JS 生成 -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>讨论 & 反馈</h2>
+            <p>暂无 Discord 讨论群。</p>
+            <p>对于中国大陆 / 香港 / 澳门 / 台湾地区，可加入 QQ 群 <strong>568240555</strong> 反馈问题。</p>
+        </div>
+    </div>
+
+    <div class="watermark">Blarion AntiCheat By NyaCrasin</div>
+
+    <script>
+        const modules = [
+            { name: "* ForceOPA", desc: "[ForceOPBlocker-1]\n玩家连接检查，用于阻挡越级黑入", enabled: true },
+            { name: "* ForceOPB", desc: "[ForceOPBlocker-2]\n玩家连接检查，用于阻挡自动机器人刷屏", enabled: true },
+            { name: "autoclickerA", desc: "检测过高的 CPS（每秒点击次数）", enabled: true },
+            { name: "autoclickerB", desc: "(等待修复) 检测稳定的，不可能由人为操作实现的 CPS 情况", enabled: false },
+            { name: "autoequipA", desc: "检测极高速切换装备", enabled: true },
+            { name: "autotoolA", desc: "检测玩家在开始破坏方块后立即切换物品栏", enabled: true },
+            { name: "badenchantsA", desc: "检测附魔等级过高", enabled: false },
+            { name: "badenchantsB", desc: "检测超出原版限制的附魔等级", enabled: false },
+            { name: "badenchantsC", desc: "检测物品被施加了无法应用的附魔", enabled: false },
+            { name: "badenchantsD", desc: "检测物品是否含有非法的 Lore 描述", enabled: false },
+            { name: "badenchantsE", desc: "检测物品是否有重复附魔", enabled: false },
+            { name: "badpackets1", desc: "检测玩家受到或造成负伤害（会同时标记受伤者与攻击者）", enabled: false },
+            { name: "badpackets2", desc: "检测玩家在受到击退伤害时尝试施加反向冲量抵消击退", enabled: true },
+            { name: "badpackets3", desc: "检测玩家是否使用近战方式击中自己", enabled: false },
+            { name: "badpackets4", desc: "检测无冷却攻击伤害", enabled: false },
+            { name: "badpackets5", desc: "检测 X 轴旋转角度大于 90 度", enabled: true },
+            { name: "badpackets6", desc: "不可能行为检查", enabled: true },
+            { name: "badskin1", desc: "检测玩家皮肤数据异常，用于防止大文件4D皮肤卡服\n[需等待 GameTest API 更新]", enabled: true },
+            { name: "commandblockexploitF", desc: "阻止放置蜂巢、蜂箱和移动方块", enabled: true },
+            { name: "commandblockexploitG", desc: "额外击杀检查（命令方块矿车等实体）", enabled: true },
+            { name: "commandblockexploitH", desc: "额外物品清除检查", enabled: false },
+            { name: "commandblockexploitW", desc: "(API) Websocket 命令请求检查", enabled: true },
+            { name: "crasherA", desc: "检测传送出世界边界", enabled: true },
+            { name: "crasherB", desc: "检测过大的渲染距离", enabled: true },
+            { name: "crasherC", desc: "(需要StarBloomAPI) 检测无效字符导致的崩溃", enabled: true },
+            { name: "fastuseA", desc: "检测极快速使用/投掷物品，以及类飞行移动", enabled: false },
+            { name: "fastuseB", desc: "检测极快速放置方块（非法速搭方块）", enabled: true },
+            { name: "fly0", desc: "(已过时) 检测并取消玩家非法开启飞行\n[适用于 1.21 以下版本]", enabled: true },
+            { name: "flyA", desc: "(已过时) 检测玩家卡在半空中\n[适用于 1.20 以下版本]", enabled: false },
+            { name: "flyB", desc: "(已过时) 检测玩家的上升距离\n[适用于 1.21 以下版本和非BDS服务器]", enabled: false },
+            { name: "flyC", desc: "高级上升距离检查。\n额外检查：\n1.检测无鞘翅滑翔 2.检测空中无效的 Y 轴速度加速度", enabled: true },
+            { name: "flyD", desc: "检测空中跳跃 / 假搭方块飞行", enabled: true },
+            { name: "illegalitemsI", desc: "非法NBT物品检查（容器方块）", enabled: false },
+            { name: "illegalitemsK", desc: "非法NBT物品检查（运输船/矿车）", enabled: false },
+            { name: "instabreakA", desc: "检测瞬间破坏方块", enabled: false },
+            { name: "invalidsprintA", desc: "检测玩家在拥有失明效果时疾跑", enabled: true },
+            { name: "killauraB", desc: "(已过时) 检测无挥刀/客户端激流\n[检测 Toolbox 杀戮光环，适用于 1.20.80 以下版本]", enabled: false },
+            { name: "killauraC", desc: "多重攻击检查", enabled: true },
+            { name: "killauraD", desc: "检测睡觉时攻击", enabled: false },
+            { name: "killauraE", desc: "检测打开容器时攻击", enabled: false },
+            { name: "killauraF", desc: "高级杀戮类行为检查合集\n额外检查(默认禁用)：弱光线追踪杀戮光环检测\n(⚠ 高算力消耗，设备配置过低的玩家请勿启用！)", enabled: true },
+            { name: "namespoofA", desc: "检测玩家名称长度超过 16 个字符", enabled: true },
+            { name: "namespoofB", desc: "检测名称含有非法字符", enabled: true },
+            { name: "noslowA", desc: "检测玩家在特殊方块内或进食时没有减速", enabled: false },
+            { name: "noclipA", desc: "(已过时) 检测玩家在方块表面下方移动", enabled: false },
+            { name: "nofallA", desc: "(已过时) 检测玩家拥有速度但没有任何移动\n[适用于 1.21.40 以下版本]", enabled: false },
+            { name: "nukerA", desc: "多重破坏检查", enabled: true },
+            { name: "reachA", desc: "过长实体攻击距离检查", enabled: true },
+            { name: "reachB", desc: "过长方块攻击距离检查", enabled: true },
+            { name: "scaffoldA", desc: "快速搭路检查", enabled: true },
+            { name: "scaffoldB", desc: "检测错误朝向放置方块", enabled: true },
+            { name: "scaffoldC", desc: "检测玩家向上看时在脚下放置方块", enabled: true },
+            { name: "scaffoldD", desc: "检测向下搭路", enabled: false },
+            { name: "scaffoldE", desc: "检测在液体或空气中放置方块", enabled: true },
+            { name: "xrayA", desc: "矿物透视辅助检查，在玩家频繁挖取稀有矿时提醒管理员 (不是真的能检查矿透!)", enabled: false },
+            { name: "speedA", desc: "检测玩家陆地移动速度超过原版", enabled: false },
+            { name: "speedB", desc: "检测玩家使用兔子跳/虚空跳/长跳/速度飞行", enabled: false },
+            { name: "speedC", desc: "检测其他类速度移动，如伪传送等", enabled: true },
+            { name: "timerA", desc: "(已过时) 检测玩家客户端游戏刻异常（Timer）", enabled: false },
+            { name: "timerB", desc: "检测玩家发包速率异常\n[仅服务器，需要BlarionNetWork扩展包]", enabled: true }
+        ];
+
+        function formatModuleName(name) {
+            const prefix = name.slice(0, -1);
+            const suffix = name.slice(-1);
+            const capitalized = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+            return capitalized + "/" + suffix;
+        }
+
+        function generateCheckCards() {
+            const grid = document.getElementById('checkGrid');
+            modules.forEach(mod => {
+                if (!mod.desc) return;
+                const card = document.createElement('div');
+                card.className = 'check-card' + (mod.enabled ? '' : ' disabled');
+                const badge = mod.enabled
+                    ? '<span class="status-badge status-enabled">默认启用</span>'
+                    : '<span class="status-badge status-disabled">默认禁用</span>';
+                card.innerHTML = `
+                    <div class="check-name">${formatModuleName(mod.name)} 检查: ${badge}</div>
+                    <div class="check-desc">· ${mod.desc.replace(/\n/g, '<br>· ')}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        createStars();
+        generateCheckCards();
+    </script>
+</body>
+</html>
